@@ -94,4 +94,7 @@ public/
 # DynamoDB Local files
 .dynamodb/
 
+# Exclude username and password information
+config.json
+
 # End of https://www.gitignore.io/api/node
