@@ -34,6 +34,6 @@ function scrollToBottom() {
                 clearInterval(scrollInterval);
                 resolve("");
             }
-        }, 50);
+        }, 1);
     });
 }
