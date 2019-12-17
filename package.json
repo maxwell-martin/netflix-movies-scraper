@@ -1,0 +1,23 @@
+{
+  "name": "netflix-movies-scaper",
+  "version": "1.0.0",
+  "description": "\"A Node.js console application that used Puppeteer to scrape data from Netflix and RottenTomatoes.\"",
+  "main": "index.js",
+  "dependencies": {
+    "puppeteer": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxwell-martin/netflix-movies-scraper.git"
+  },
+  "author": "Maxwell Martin (https://github.com/maxwell-martin)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maxwell-martin/netflix-movies-scraper/issues"
+  },
+  "homepage": "https://github.com/maxwell-martin/netflix-movies-scraper#readme"
+}
