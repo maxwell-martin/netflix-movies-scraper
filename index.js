@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
 const readline = require('readline');
-const fs = require('fs');
+const scraper = require('./scraper.js');
+const ObjectsToCsv = require('objects-to-csv');
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-function question1() {
+function askForUsername() {
     return new Promise(resolve => {
         rl.question('What is your Netflix username? ', (username) => {
             resolve(username.trim());
@@ -16,7 +17,7 @@ function question1() {
     });
 }
 
-function question2() {
+function askForPassword() {
     return new Promise(resolve => {
         rl.question('What is your Netflix password? ', (password) => {
             resolve(password.trim());
@@ -24,20 +25,36 @@ function question2() {
     });
 }
 
-let user, netflixUsername, netflixPassword, validUsername = false, validPassword = false;
+function askForProfile() {
+    return new Promise(resolve => {
+        rl.question('What Netflix profile do you want to use? ', (profile) => {
+            resolve(profile.trim());
+        });
+    });
+}
 
-const main = async () => {
+let user, netflixUsername, netflixPassword, netflixProfile;
+let validUsername = false, validPassword = false, validProfile = false;
+
+(async () => {
     while (!validUsername) {
-        netflixUsername = await question1();
+        netflixUsername = await askForUsername();
         if (netflixUsername !== undefined && netflixUsername !== null && netflixUsername !== '') {
             validUsername = true;
         }
     }
 
     while (!validPassword) {
-        netflixPassword = await question2();
+        netflixPassword = await askForPassword();
         if (netflixPassword !== undefined && netflixPassword !== null && netflixPassword !== '') {
             validPassword = true;
+        }
+    }
+
+    while (!validProfile) {
+        netflixProfile = await askForProfile();
+        if (netflixProfile !== undefined && netflixProfile !== null && netflixProfile !== '') {
+            validProfile = true;
         }
     }
 
@@ -45,8 +62,23 @@ const main = async () => {
 
     user = {
         username: netflixUsername,
-        password: netflixPassword
+        password: netflixPassword,
+        profile: netflixProfile
     };
 
-    fs.writeFileSync('config.json', JSON.stringify(user));
-};
+    const results = await scraper.scrape(user);
+
+    console.log("Creating csv file...")
+    const today = new Date();
+    let month = (today.getMonth() + 1).toString();
+    let day = today.getDate().toString();
+    let year = today.getFullYear().toString().substring(2,4);
+    let strDate = month + day + year;
+    const csvFileName = 'netflix-movies-as-of' + strDate + '.csv';
+    const csv = new ObjectsToCsv(results);
+    await csv.toDisk('./' + csvFileName);
+
+    console.log("A CSV file named " + csvFileName + " with all movie information has been created in this project's folder.");
+
+    process.exitCode = 1;
+})();

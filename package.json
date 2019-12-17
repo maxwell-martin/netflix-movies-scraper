@@ -4,6 +4,7 @@
   "description": "\"A Node.js console application that used Puppeteer to scrape data from Netflix and RottenTomatoes.\"",
   "main": "index.js",
   "dependencies": {
+    "objects-to-csv": "^1.3.5",
     "puppeteer": "^2.0.0"
   },
   "devDependencies": {},
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/maxwell-martin/netflix-movies-scraper/issues"
   },
-  "homepage": "https://github.com/maxwell-martin/netflix-movies-scraper#readme"
+  "homepage": "https://github.com/maxwell-martin/netflix-movies-scraper#readme",
+  "bin": {
+    "netflix-movies-scraper": "index.js"
+  }
 }
