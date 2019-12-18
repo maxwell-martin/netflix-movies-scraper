@@ -1,9 +1,9 @@
 const puppeteer = require('puppeteer');
-const codes = require('./codes.json');
 
 const netflixMoviesBaseUrl = 'https://www.netflix.com/browse/genre/';
 const netflixMoviesExtraParams = '?so=az';
 const netflixLoginPage = 'https://www.netflix.com/login';
+const netflixMoviesPage ='https://www.netflix.com/browse/genre/34399';
 const rottenTomatoesBaseUrl = 'https://www.rottentomatoes.com/m/';
 
 let results = [];
@@ -27,10 +27,6 @@ module.exports = {
         console.log("Logging in to Netflix...");
         await pageBrowser1.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
     
-        // randomWaitTime = Math.random() * 5000;
-        // console.log("Waiting for " + (randomWaitTime / 1000) + " seconds.");
-        // await pageBrowser1.waitFor(randomWaitTime);
-    
         const indexOfUserAccount = await pageBrowser1.evaluate((profile) => {
             let userAccounts = document.querySelector("#appMountPoint > div > div > div:nth-child(1) > div.bd.dark-background > div.profiles-gate-container > div > div > ul").children;
     
@@ -49,28 +45,35 @@ module.exports = {
 
         // Click the user account if the user entered a correct account name. Otherwise, choose 1st account.
         await pageBrowser1.click('li.profile:nth-child(' + indexOfUserAccount + ') > div:nth-child(1) > a:nth-child(1)');
-    
         console.log("Loading user profile...");
-
         await pageBrowser1.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
-    
-        // randomWaitTime = Math.random() * 5000;
-        // console.log("Waiting for " + (randomWaitTime / 1000) + " seconds.");
-        // await pageBrowser1.waitFor(randomWaitTime);
-    
-        for (let [code, description] of Object.entries(codes)) {
-            if (!description.includes('TV')) {
-                console.log("Loading genre: " + description);
-                await pageBrowser1.goto(netflixMoviesBaseUrl + code + netflixMoviesExtraParams, { waitUntil: 'networkidle2', timeout: 0 });
-    
-                // randomWaitTime = Math.random() * 5000;
-                // console.log("Waiting for " + (randomWaitTime / 1000) + " seconds.");
-                // await pageBrowser1.waitFor(randomWaitTime);
-    
-                results = await scrapeMovies(pageBrowser1, pageBrowser2, extractItems, results);
-            } else {
-                console.log(description + " is TV shows not movies. Going to next genre.");
+
+        await pageBrowser1.goto(netflixMoviesPage, { waitUntil: 'networkidle2', timeout: 0 });
+
+        // Click the 'Genres' drop-down menu
+        await pageBrowser1.click('div[label="Genres"] > div');
+        console.log("Loading movie genres...");
+
+        const codes = await pageBrowser1.evaluate(() => {
+            let anchors = document.querySelectorAll('div[label="Genres"] > div + div li > a');
+            let codes = [];
+
+            for (let a of anchors) {
+                let genre = {
+                    name: a.innerText,
+                    code: a.pathname.substr(a.pathname.lastIndexOf('/') + 1)
+                }
+
+                codes.push(genre);
             }
+
+            return codes;
+        });
+    
+        for (let c of codes) {
+            console.log("Loading genre: " + c.name + " - " + c.code);
+            await pageBrowser1.goto(netflixMoviesBaseUrl + c.code + netflixMoviesExtraParams, { waitUntil: 'networkidle2', timeout: 0 });
+            results = await scrapeMovies(pageBrowser1, pageBrowser2, extractItems, results);
         }
     
         console.log("Completed scraping Netflix movies.");

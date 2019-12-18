@@ -37,33 +37,39 @@ let user, netflixUsername, netflixPassword, netflixProfile;
 let validUsername = false, validPassword = false, validProfile = false;
 
 (async () => {
-    while (!validUsername) {
-        netflixUsername = await askForUsername();
-        if (netflixUsername !== undefined && netflixUsername !== null && netflixUsername !== '') {
-            validUsername = true;
-        }
-    }
+    // while (!validUsername) {
+    //     netflixUsername = await askForUsername();
+    //     if (netflixUsername !== undefined && netflixUsername !== null && netflixUsername !== '') {
+    //         validUsername = true;
+    //     }
+    // }
 
-    while (!validPassword) {
-        netflixPassword = await askForPassword();
-        if (netflixPassword !== undefined && netflixPassword !== null && netflixPassword !== '') {
-            validPassword = true;
-        }
-    }
+    // while (!validPassword) {
+    //     netflixPassword = await askForPassword();
+    //     if (netflixPassword !== undefined && netflixPassword !== null && netflixPassword !== '') {
+    //         validPassword = true;
+    //     }
+    // }
 
-    while (!validProfile) {
-        netflixProfile = await askForProfile();
-        if (netflixProfile !== undefined && netflixProfile !== null && netflixProfile !== '') {
-            validProfile = true;
-        }
-    }
+    // while (!validProfile) {
+    //     netflixProfile = await askForProfile();
+    //     if (netflixProfile !== undefined && netflixProfile !== null && netflixProfile !== '') {
+    //         validProfile = true;
+    //     }
+    // }
 
     rl.close();
 
+    // user = {
+    //     username: netflixUsername,
+    //     password: netflixPassword,
+    //     profile: netflixProfile
+    // };
+
     user = {
-        username: netflixUsername,
-        password: netflixPassword,
-        profile: netflixProfile
+        username: 'cr3ativegirl@gmail.com',
+        password: '6bg5Et!z30@T',
+        profile: 'Max'
     };
 
     const results = await scraper.scrape(user);
