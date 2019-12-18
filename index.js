@@ -3,6 +3,7 @@
 const readline = require('readline');
 const scraper = require('./scraper.js');
 const ObjectsToCsv = require('objects-to-csv');
+const config = require('./config.json'); // Testing purposes only
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -33,8 +34,16 @@ function askForProfile() {
     });
 }
 
-let user, netflixUsername, netflixPassword, netflixProfile;
-let validUsername = false, validPassword = false, validProfile = false;
+function askForApiKey() {
+    return new Promise(resolve => {
+        rl.question('What is your Omdb api key? ', (apiKey) => {
+            resolve(apiKey.trim());
+        });
+    });
+}
+
+let user, netflixUsername, netflixPassword, netflixProfile, apiKey;
+let validUsername = false, validPassword = false, validProfile = false, validApiKey = false;
 
 (async () => {
     // while (!validUsername) {
@@ -58,6 +67,13 @@ let validUsername = false, validPassword = false, validProfile = false;
     //     }
     // }
 
+    // while (!validApiKey) {
+    //     apiKey = await askForApiKey();
+    //     if (apiKey !== undefined && apiKey !== null && apiKey !== '') {
+    //         validApiKey = true;
+    //     }
+    // }
+
     rl.close();
 
     // user = {
@@ -67,9 +83,10 @@ let validUsername = false, validPassword = false, validProfile = false;
     // };
 
     user = {
-        username: 'cr3ativegirl@gmail.com',
-        password: '6bg5Et!z30@T',
-        profile: 'Max'
+        username: config.username,
+        password: config.password,
+        profile: config.profile,
+        apiKey: config.apiKey
     };
 
     const results = await scraper.scrape(user);

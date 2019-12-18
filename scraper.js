@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const request = require('request-promise');
 
 const netflixMoviesBaseUrl = 'https://www.netflix.com/browse/genre/';
 const netflixMoviesExtraParams = '?so=az';
@@ -27,26 +28,28 @@ module.exports = {
         console.log("Logging in to Netflix...");
         await pageBrowser1.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
     
-        const indexOfUserAccount = await pageBrowser1.evaluate((profile) => {
-            let userAccounts = document.querySelector("#appMountPoint > div > div > div:nth-child(1) > div.bd.dark-background > div.profiles-gate-container > div > div > ul").children;
+        // const indexOfUserAccount = await pageBrowser1.evaluate((profile) => {
+        //     let userAccounts = document.querySelector("#appMountPoint > div > div > div:nth-child(1) > div.bd.dark-background > div.profiles-gate-container > div > div > ul").children;
     
-            // Default user profile index.
-            let index = 0;
+        //     // Default user profile index.
+        //     let index = 0;
     
-            for (let i = 0; i < userAccounts.length; i++) {
-                if (userAccounts[i].innerText === profile) {
-                    index = i;
-                    break;
-                }
-            }
+        //     for (let i = 0; i < userAccounts.length; i++) {
+        //         if (userAccounts[i].innerText === profile) {
+        //             index = i;
+        //             break;
+        //         }
+        //     }
     
-            return index + 1;
-        }, user.profile);
+        //     return index + 1;
+        // }, user.profile);
 
-        // Click the user account if the user entered a correct account name. Otherwise, choose 1st account.
-        await pageBrowser1.click('li.profile:nth-child(' + indexOfUserAccount + ') > div:nth-child(1) > a:nth-child(1)');
-        console.log("Loading user profile...");
-        await pageBrowser1.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
+        // // Click the user account if the user entered a correct account name. Otherwise, choose 1st account.
+        // await pageBrowser1.click('li.profile:nth-child(' + indexOfUserAccount + ') > div:nth-child(1) > a:nth-child(1)');
+        // console.log("Loading user profile...");
+        // await pageBrowser1.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
+
+        await clickUserProfile(pageBrowser1, user);
 
         await pageBrowser1.goto(netflixMoviesPage, { waitUntil: 'networkidle2', timeout: 0 });
 
@@ -73,6 +76,22 @@ module.exports = {
         for (let c of codes) {
             console.log("Loading genre: " + c.name + " - " + c.code);
             await pageBrowser1.goto(netflixMoviesBaseUrl + c.code + netflixMoviesExtraParams, { waitUntil: 'networkidle2', timeout: 0 });
+            let profileSelectionRequired = await pageBrowser1.evaluate(() => {
+                let profileDiv = document.querySelector('.list-profiles');
+                if (profileDiv === null) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+
+            if (profileSelectionRequired) {
+                console.log("User profile needed...");
+                await clickUserProfile(pageBrowser1, user);
+                console.log("Reloading genre: " + c.name + " - " + c.code);
+                await pageBrowser1.goto(netflixMoviesBaseUrl + c.code + netflixMoviesExtraParams, { waitUntil: 'networkidle2', timeout: 0 });
+            } 
+
             results = await scrapeMovies(pageBrowser1, pageBrowser2, extractItems, results);
         }
     
@@ -172,4 +191,27 @@ async function scrapeMovies(
 
 function movieExists(arrOfMovieObjects, nameOfMovie) {
     return arrOfMovieObjects.some(movieObject => nameOfMovie === movieObject.title);
+}
+
+async function clickUserProfile(page, user) {
+    const indexOfUserAccount = await page.evaluate((profile) => {
+        let userAccounts = document.querySelector("#appMountPoint > div > div > div:nth-child(1) > div.bd.dark-background > div.profiles-gate-container > div > div > ul").children;
+
+        // Default user profile index.
+        let index = 0;
+
+        for (let i = 0; i < userAccounts.length; i++) {
+            if (userAccounts[i].innerText === profile) {
+                index = i;
+                break;
+            }
+        }
+
+        return index + 1;
+    }, user.profile);
+
+    // Click the user account if the user entered a correct account name. Otherwise, choose 1st account.
+    await page.click('li.profile:nth-child(' + indexOfUserAccount + ') > div:nth-child(1) > a:nth-child(1)');
+    console.log("Loading user profile...");
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
 }
