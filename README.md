@@ -7,11 +7,11 @@ This project scrapes "all" movies from Netflix based on the main netflix genres,
 3. Unzip downloaded directory.
 4. Change into the directory via command line.
 5. Type: `npm ci`. This will clean install the project and download the required modules. You should see a folder called 'node_modules' now inside the directory.
-6. Option 1: Install project globally to NPM - Type in command line: `npm install -g .`. Now, type in `netflix-movies-scraper` and click enter.
-7. Option 2: Run project without installing to NPM - Type in command line: `node .\index.js` and click enter.
+6. Option 1: Install project globally to NPM - Type in command line: `npm install -g .`. Now, type in `netflix-movies-scraper`, and click enter.
+7. Option 2: Run project without installing to NPM - Type in command line: `node .\index.js`, and click enter.
 8. You will be prompted via the command line to enter your Netflix username, password, and profile name. Answer each question by typing in your response and clicking enter. After the last question, the program will begin scraping. If you are worried about entering in your username and password, please read the code. A valid username and password is required so that Puppeteer can login to Netflix via the headless browser and begin scraping.
 9. View project status in command line.
-10. When project is done, you will have a CSV file inside the directory called `netflix-movies-as-of-DATE.csv`
+10. When project is done, you will have a CSV file inside the directory called `netflix-movies-as-of-DATE.csv`.
 
 ## Whose code and which websites/articles did I view when making this program?
 The names and links below are my attempt to give credit to those whose public information/code helped me. I also spent a lot of time on Stack Overflow figuring out how to do things. I have only included links from Stack Overflow related to Puppeteer, Node.js, or an NPM module.
