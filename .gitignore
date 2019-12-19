@@ -95,6 +95,6 @@ public/
 .dynamodb/
 
 # Exclude extras
-miscellaneous/
+testing/
 
 # End of https://www.gitignore.io/api/node

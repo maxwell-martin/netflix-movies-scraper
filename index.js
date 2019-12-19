@@ -3,7 +3,9 @@
 const readline = require('readline');
 const scraper = require('./scraper.js');
 const ObjectsToCsv = require('objects-to-csv');
-const config = require('./config.json'); // Testing purposes only
+
+// Testing purposes only
+//const config = require('./miscellaneous/config.json'); 
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -34,70 +36,55 @@ function askForProfile() {
     });
 }
 
-function askForApiKey() {
-    return new Promise(resolve => {
-        rl.question('What is your Omdb api key? ', (apiKey) => {
-            resolve(apiKey.trim());
-        });
-    });
-}
-
-let user, netflixUsername, netflixPassword, netflixProfile, apiKey;
-let validUsername = false, validPassword = false, validProfile = false, validApiKey = false;
+let netflixUsername, netflixPassword, netflixProfile;
+let validUsername = false, validPassword = false, validProfile = false;
 
 (async () => {
-    // while (!validUsername) {
-    //     netflixUsername = await askForUsername();
-    //     if (netflixUsername !== undefined && netflixUsername !== null && netflixUsername !== '') {
-    //         validUsername = true;
-    //     }
-    // }
+    while (!validUsername) {
+        netflixUsername = await askForUsername();
+        if (netflixUsername !== undefined && netflixUsername !== null && netflixUsername !== '') {
+            validUsername = true;
+        }
+    }
 
-    // while (!validPassword) {
-    //     netflixPassword = await askForPassword();
-    //     if (netflixPassword !== undefined && netflixPassword !== null && netflixPassword !== '') {
-    //         validPassword = true;
-    //     }
-    // }
+    while (!validPassword) {
+        netflixPassword = await askForPassword();
+        if (netflixPassword !== undefined && netflixPassword !== null && netflixPassword !== '') {
+            validPassword = true;
+        }
+    }
 
-    // while (!validProfile) {
-    //     netflixProfile = await askForProfile();
-    //     if (netflixProfile !== undefined && netflixProfile !== null && netflixProfile !== '') {
-    //         validProfile = true;
-    //     }
-    // }
-
-    // while (!validApiKey) {
-    //     apiKey = await askForApiKey();
-    //     if (apiKey !== undefined && apiKey !== null && apiKey !== '') {
-    //         validApiKey = true;
-    //     }
-    // }
+    while (!validProfile) {
+        netflixProfile = await askForProfile();
+        if (netflixProfile !== undefined && netflixProfile !== null && netflixProfile !== '') {
+            validProfile = true;
+        }
+    }
 
     rl.close();
 
-    // user = {
-    //     username: netflixUsername,
-    //     password: netflixPassword,
-    //     profile: netflixProfile
-    // };
-
-    user = {
-        username: config.username,
-        password: config.password,
-        profile: config.profile,
-        apiKey: config.apiKey
+    let user = {
+        username: netflixUsername,
+        password: netflixPassword,
+        profile: netflixProfile
     };
+
+    /* Testing purposes only */
+    // let user = {
+    //     username: config.username,
+    //     password: config.password,
+    //     profile: config.profile
+    // };
 
     const results = await scraper.scrape(user);
 
-    console.log("Creating csv file...")
+    console.log("Creating csv file...");
     const today = new Date();
     let month = (today.getMonth() + 1).toString();
     let day = today.getDate().toString();
     let year = today.getFullYear().toString().substring(2,4);
     let strDate = month + day + year;
-    const csvFileName = 'netflix-movies-as-of' + strDate + '.csv';
+    const csvFileName = 'netflix-movies-as-of-' + strDate + '.csv';
     const csv = new ObjectsToCsv(results);
     await csv.toDisk('./' + csvFileName);
 
