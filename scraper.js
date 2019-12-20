@@ -171,20 +171,16 @@ async function scrapeMovies(
                     console.log("No IMDB Votes property.");
                 }
 
+                movie.tomatometer = 'N/A';
                 if (resultJSON.hasOwnProperty('Ratings')) {
-                    movie.tomatometer = 'N/A';
                     for(let obj of resultJSON.Ratings) {
                         if (obj.Source === 'Rotten Tomatoes') {
                             movie.tomatometer = obj.Value;
-                            console.log("Tomatometer: " + movie.tomatometer);
                             break;
                         }
                     }
-                    console.log('Tomatometer? N/A if not found in Ratings array from JSON: ' + movie.tomatometer);
-                } else {
-                    movie.tomatometer = 'N/A';
-                    console.log("No Tomatometer property.");
                 }
+                console.log("Tomatometer: " + movie.tomatometer);
 
                 console.log("Movie has been scraped.")
                 console.log("Title: " + movie.title + " | ImdbRating: " + movie.imdbRating + " | ImdbVotes: " + movie.imdbVotes + " | Tomatometer: " + movie.tomatometer);
