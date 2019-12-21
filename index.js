@@ -4,9 +4,6 @@ const readline = require('readline');
 const scraper = require('./scraper.js');
 const ObjectsToCsv = require('objects-to-csv');
 
-// Testing purposes only
-//const config = require('./miscellaneous/config.json'); 
-
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -68,13 +65,6 @@ let validUsername = false, validPassword = false, validProfile = false;
         password: netflixPassword,
         profile: netflixProfile
     };
-
-    /* Testing purposes only */
-    // let user = {
-    //     username: config.username,
-    //     password: config.password,
-    //     profile: config.profile
-    // };
 
     const results = await scraper.scrape(user);
 
