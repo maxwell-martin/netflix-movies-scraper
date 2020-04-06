@@ -4,9 +4,9 @@
   "description": "\"A Node.js console application that uses Puppeteer to scrape data from Netflix and request data from OMDB.\"",
   "main": "index.js",
   "dependencies": {
-    "objects-to-csv": "^1.3.5",
-    "puppeteer": "^2.0.0",
-    "request": "^2.88.0",
+    "objects-to-csv": "^1.3.6",
+    "puppeteer": "^2.1.1",
+    "request": "^2.88.2",
     "request-promise": "^4.2.5"
   },
   "devDependencies": {},
